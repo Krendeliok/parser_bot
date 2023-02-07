@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Parsing result</title>
+	<style>
+	*{
+		margin: 0;
+		padding: 0;
+	}
+	table {
+		width: 100%;
+  		border-collapse: collapse;
+	}
+	td, th {
+	  border: 1px solid #dddddd;
+	  text-align: left;
+	  padding: 7px;
+	}
+	tr:nth-child(even) {
+	  background-color: #dddddd;
+	}
+	</style>
+</head>
+<body>
+
+<table>
+	<tr>
+		<th>Назва каналу/чату</th>
+		<th>Повідомлення</th>
+		<th>Кто відправив</th>
+		<th>Телефон</th>
+	</tr>
+	% for chat_title, messages in parsing_data.items():
+		<%
+			rowspan = len(messages)
+		%>
+		% for message, from_entity in messages:
+		<tr>
+			% if loop.index == 0:
+			<td rowspan="${rowspan}">${ chat_title }</td>
+			% endif
+			<td>${message.text}</td>
+			<td>${from_entity.username if from_entity.username else from_entity.title}</td>
+			<%
+				from telethon.types import User
+
+				phone = "-"
+				if isinstance(from_entity, User):
+					phone = from_entity.phone
+			%>
+			<td>${phone}</td>
+		</tr>
+		% endfor
+	% endfor
+</table>
+</body>
+</html>
